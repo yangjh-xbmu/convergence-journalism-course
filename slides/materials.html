@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>账号诊断 · 完整操作材料</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <style>
+      :root {
+        color-scheme: light;
+        --blue: #1a4a8a;
+        --ink: #202833;
+        --line: #d8e0e9;
+        --muted: #596675;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #fcfcfa;
+        color: var(--ink);
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+      }
+      main {
+        max-width: 1280px;
+        margin: auto;
+        padding: 32px;
+      }
+      h1 {
+        font-family: "Songti SC", "SimSun", serif;
+        font-size: 38px;
+        color: var(--blue);
+        margin: 0 0 12px;
+      }
+      .intro {
+        max-width: 1000px;
+        font-size: 18px;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 28px;
+        margin-top: 28px;
+      }
+      nav h2 {
+        font-size: 17px;
+        color: var(--muted);
+        margin: 20px 0 8px;
+      }
+      button,
+      a {
+        font: inherit;
+      }
+      nav button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: 6px;
+        padding: 10px 12px;
+        color: var(--ink);
+        cursor: pointer;
+      }
+      nav button:hover,
+      nav button[aria-pressed="true"] {
+        background: #edf3fa;
+        border-color: var(--line);
+        color: var(--blue);
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 3px;
+      }
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        background: #edf3fa;
+        border-radius: 8px 8px 0 0;
+      }
+      .tools button,
+      .download {
+        background: var(--blue);
+        border: 0;
+        border-radius: 5px;
+        color: white;
+        padding: 8px 16px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .tools a {
+        color: var(--blue);
+      }
+      #file-name {
+        font-family: Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+        font-size: 15px;
+        max-width: 100%;
+      }
+      #content {
+        margin: 0;
+        min-height: 450px;
+        padding: 24px;
+        background: white;
+        border: 1px solid var(--line);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font-family: Menlo, Consolas, monospace;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      #status {
+        min-height: 1.7em;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .notice {
+        padding: 16px 20px;
+        background: #edf3fa;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .notice p {
+        margin: 5px 0;
+      }
+      .links {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .links a:not(.download) {
+        color: var(--blue);
+      }
+      @media (max-width: 850px) {
+        main {
+          padding: 22px;
+        }
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4px;
+        }
+        nav h2 {
+          grid-column: 1/-1;
+        }
+        h1 {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>把完整材料交给 Agent，不把长提示词塞进投影页</h1>
+      <p class="intro">
+        先选个人项目目录，再保存文件。WorkBuddy 与 OMP
+        使用同一套输入，只需选择一种工具；技能文件放入所用工具对应的目录。
+      </p>
+      <div class="notice">
+        <p>
+          <strong>教学虚构：</strong>demo
+          文件中的账号、作品、数值和反馈均为构造，不对应真实学生或校园政策。练习结果不能冒充自己的账号调研。
+        </p>
+        <p>
+          生成行动卡前，先由本人确认优先问题；单次预算、人数、观察时限和判断规则未提供时保留“待本人确认”。本地文件可能被云模型读取，真实资料先脱敏。
+        </p>
+      </div>
+      <div class="links">
+        <a class="download" href="account-audit-demo.zip" download
+          >下载完整虚构练习项目 ZIP</a
+        ><a href="lecture.md" download>下载详细讲义</a
+        ><a href="../#/1">返回本套课件</a>
+      </div>
+      <div class="workspace">
+        <nav aria-label="选择操作文件">
+          <h2>一 · 虚构练习输入</h2>
+          <button data-file="demo/account-profile.md">账号说明</button>
+          <button data-file="demo/samples.md">六条作品样本</button>
+          <button data-file="demo/feedback-log.md">反馈与作者说明</button>
+          <h2>二 · 完整任务</h2>
+          <button data-file="demo/tasks/diagnose.md">诊断任务</button>
+          <button data-file="demo/tasks/action-card.md">
+            人工确认后的行动卡任务
+          </button>
+          <h2>三 · 技能（二选一）</h2>
+          <button data-file="demo/.workbuddy/skills/account-audit/SKILL.md">
+            WorkBuddy · SKILL.md
+          </button>
+          <button data-file="demo/.omp/skills/account-audit/SKILL.md">
+            OMP · SKILL.md
+          </button>
+          <h2>四 · 本人材料填写模板</h2>
+          <button data-file="templates/account-profile.md">账号说明模板</button>
+          <button data-file="templates/samples.md">样本记录模板</button>
+          <button data-file="templates/feedback-log.md">走查记录模板</button>
+          <button data-file="templates/action-card.md">
+            行动卡手工填写模板
+          </button>
+          <button data-file="templates/audit-log.md">核验与确认记录模板</button>
+        </nav>
+        <section aria-label="文件内容">
+          <div class="tools">
+            <strong id="file-name"></strong>
+            <div>
+              <button id="copy" disabled>复制全文</button>
+              <a id="download" download>下载当前文件</a>
+            </div>
+          </div>
+          <p id="status" role="status" aria-live="polite"></p>
+          <pre id="content" tabindex="0"></pre>
+        </section>
+      </div>
+    </main>
+    <script>
+      const buttons = Array.from(
+        document.querySelectorAll("button[data-file]"),
+      );
+      const content = document.getElementById("content");
+      const status = document.getElementById("status");
+      const copy = document.getElementById("copy");
+      let selection = 0;
+      async function showFile(button) {
+        const request = ++selection;
+        const file = button.dataset.file;
+        buttons.forEach((item) =>
+          item.setAttribute("aria-pressed", String(item === button)),
+        );
+        document.getElementById("file-name").textContent = file;
+        const download = document.getElementById("download");
+        download.href = file;
+        copy.disabled = true;
+        content.textContent = "";
+        status.textContent = "正在读取本地文件…";
+        try {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          const text = await response.text();
+          if (request !== selection) return;
+          content.textContent = text;
+          copy.disabled = false;
+          status.textContent =
+            "保存时保留对应路径；不要复制网页标题或额外代码围栏。";
+        } catch (error) {
+          if (request !== selection) return;
+          status.textContent =
+            "文件读取失败：" +
+            error.message +
+            "。请用离线包内的启动脚本打开网页。";
+        }
+      }
+      buttons.forEach((button) =>
+        button.addEventListener("click", () => showFile(button)),
+      );
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(content.textContent);
+          status.textContent = "已复制全文。保存到当前显示的文件路径后再运行。";
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(content);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          status.textContent =
+            "浏览器未允许自动复制；已选中文本，请按 Ctrl+C 或 Cmd+C。";
+        }
+      });
+      showFile(buttons[0]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第05周：受众雇佣（JTBD）、形式匹配与脚本原型工程 — 讲义精读</title>
+  <!-- 引入开源思源宋体 600/700/900 特定字重，赋予标题沉着厚重的金石质感 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── 1. 严格引入设计代币体系 (Design Tokens Single Source of Truth) ── */
+    :root {
+      /* 基础间距模数 (4px Base Scale) */
+      --space-0: 0px;
+      --space-1: 0.25rem;   /* 4px */
+      --space-2: 0.5rem;    /* 8px */
+      --space-3: 0.75rem;   /* 12px */
+      --space-4: 1rem;      /* 16px */
+      --space-5: 1.25rem;   /* 20px */
+      --space-6: 1.5rem;    /* 24px */
+      --space-8: 2rem;      /* 32px */
+      --space-10: 2.5rem;   /* 40px */
+      --space-12: 3rem;     /* 48px */
+      --space-16: 4rem;     /* 64px */
+      --space-20: 5rem;     /* 80px */
+      --space-24: 6rem;     /* 96px */
+
+      /* 语义级容器与间距代币 (与首页 100% 严格对齐) */
+      --container-max-width: 1280px;
+      --container-padding-x: clamp(var(--space-6), 5.5vw, var(--space-16));
+      --section-padding-y: clamp(var(--space-12), 6.5vw, var(--space-20));
+      --hero-padding-top: clamp(var(--space-16), 8vw, var(--space-24));
+      --hero-padding-bottom: clamp(var(--space-12), 6vw, var(--space-16));
+
+      /* 卡片与内部容器内边距 */
+      --card-padding-x: var(--space-8); /* 32px */
+      --card-padding-y: var(--space-6); /* 24px */
+      --measure-body: 46em;             /* 放宽行宽，确保长标题不狼狈换行 */
+
+      /* 色彩语义代币 */
+      --paper: #FAF6ED;
+      --paper-surface: #FDFCF9;
+      --paper-dim: #EFECE3;
+      --ink: #1E1D1B;
+      --ink-body: #4A4640;
+      --ink-muted: #7E786E;
+      --rule: #E6E1D6;
+      --rule-bold: #2A2825;
+      --terracotta: #B4533C;
+      --terracotta-soft: rgba(180, 83, 60, 0.08);
+
+      /* 思源宋体特定厚重字重 */
+      --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "Playfair Display", Georgia, serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", Consolas, monospace;
+
+      --paper-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; font-synthesis: none; }
+    body {
+      background-color: var(--paper);
+      background-image: var(--paper-noise);
+      color: var(--ink-body);
+      font-family: var(--font-text);
+      font-size: 1.0625rem;
+      line-height: 1.9;
+      letter-spacing: 0.02em;
+      padding-bottom: var(--space-24);
+    }
+
+    /* ── 2. 全局版心容器 (与首页完全一致的宽度与左右 Padding) ── */
+    .shell {
+      max-width: var(--container-max-width);
+      margin-inline: auto;
+      padding-inline: var(--container-padding-x);
+    }
+
+    /* ── 3. 顶部极简导航与面包屑 ── */
+    .top-nav-bar {
+      padding-block: var(--space-8) var(--space-4);
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-family: var(--font-text);
+      color: var(--ink-muted);
+    }
+
+    .breadcrumb-trail {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .breadcrumb-trail a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb-trail a:hover {
+      color: var(--ink);
+    }
+
+    .back-home-btn {
+      color: var(--terracotta);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    /* ── 4. 章节大标题与题头 (Chapter Header) ── */
+    .chapter-header {
+      padding-top: var(--hero-padding-top);
+      padding-bottom: var(--hero-padding-bottom);
+      border-bottom: 1.5px solid var(--rule-bold);
+      margin-bottom: var(--section-padding-y);
+    }
+
+    .chapter-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.22em;
+      color: var(--terracotta);
+      text-transform: uppercase;
+      margin-bottom: var(--space-4);
+      display: block;
+      font-weight: 700;
+    }
+
+    .chapter-h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 1.4rem + 2.4vw, 3.4rem);
+      font-weight: 900;           /* 思源宋体 Black 900 */
+      color: var(--ink);
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+      margin-bottom: var(--space-6);
+    }
+
+    .chapter-meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      font-size: 0.875rem;
+      color: var(--ink-muted);
+      font-family: var(--font-text);
+      margin-bottom: var(--space-8);
+    }
+
+    .chapter-meta-line strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .chapter-abstract {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.95;
+      color: var(--ink);
+      border-left: 3px solid var(--terracotta);
+      padding-left: var(--space-6);
+      max-width: var(--measure-body);
+    }
+
+    /* ── 5. 双栏非对称长文阅读网格 ── */
+    .reading-grid {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      column-gap: var(--space-16);
+      align-items: start;
+    }
+
+    /* 左侧常驻旁注与目次 (Sticky Rail) */
+    .sidenote-rail {
+      position: sticky;
+      top: var(--space-10);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-10);
+    }
+
+    .sidenote-box {
+      border-top: 1.5px solid var(--rule-bold);
+      padding-top: var(--space-4);
+    }
+
+    .sidenote-heading {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+    }
+
+    .chapter-toc-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      font-size: 0.875rem;
+    }
+
+    .chapter-toc-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: block;
+      line-height: 1.5;
+      transition: color 0.2s;
+    }
+
+    .chapter-toc-links a:hover {
+      color: var(--terracotta);
+    }
+
+    .anchor-citation {
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: var(--ink-muted);
+      background-color: var(--paper-surface);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--terracotta);
+      padding: var(--space-4);
+      border-radius: 2px;
+    }
+
+    .anchor-citation strong {
+      color: var(--ink);
+      display: block;
+      margin-bottom: var(--space-1);
+      font-weight: 700;
+    }
+
+    /* 右侧正文流 (Reading Column) - 换用思源宋体 700 厚重字重 */
+    .prose-stream {
+      max-width: var(--measure-body);
+    }
+
+    .prose-stream h2 {
+      font-family: var(--font-serif);
+      font-size: 1.85rem;
+      font-weight: 700;          /* 思源宋体 Bold 700：力透纸背的厚重墨色 */
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      margin-top: var(--space-16);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-3);
+      border-bottom: 1.5px solid var(--ink);
+    }
+
+    .prose-stream h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-4);
+    }
+
+    .prose-stream p {
+      margin-bottom: var(--space-6);
+      text-align: start;
+      line-height: 1.95;
+    }
+
+    .prose-stream ul, .prose-stream ol {
+      margin-bottom: var(--space-6);
+      padding-left: var(--space-6);
+    }
+
+    .prose-stream li {
+      margin-bottom: var(--space-2);
+      line-height: 1.85;
+    }
+
+    /* 引用块 */
+    .editorial-quote {
+      border-left: 3px solid var(--ink);
+      padding-left: var(--space-6);
+      margin-block: var(--space-8);
+      font-style: italic;
+      color: var(--ink);
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    /* 动力学公式展示盒 */
+    .formula-display-card {
+      background-color: var(--paper-surface);
+      border: 1px solid var(--rule);
+      border-top: 2px solid var(--terracotta);
+      padding: var(--card-padding-y) var(--card-padding-x);
+      margin-block: var(--space-10);
+      border-radius: 2px;
+    }
+
+    .formula-title {
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.15em;
+      color: var(--terracotta);
+      text-transform: uppercase;
+      margin-bottom: var(--space-3);
+      font-weight: 700;
+    }
+
+    .formula-equation {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      font-weight: 700;
+    }
+
+    .formula-desc {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.7;
+    }
+
+    /* 三线表 */
+    .data-table-three {
+      width: 100%;
+      border-collapse: collapse;
+      margin-block: var(--space-8);
+      font-size: 0.925rem;
+    }
+
+    .data-table-three th {
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: var(--space-3) var(--space-2);
+      text-align: left;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .data-table-three td {
+      border-bottom: 1px solid var(--rule);
+      padding: var(--space-4) var(--space-2);
+      vertical-align: top;
+      color: var(--ink-body);
+    }
+
+    /* 代码块 */
+    .code-sample-box {
+      background-color: var(--paper-dim);
+      border: 1px solid var(--rule);
+      padding: var(--space-5) var(--space-6);
+      margin-block: var(--space-8);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: var(--ink);
+      overflow-x: auto;
+      border-radius: 2px;
+    }
+
+    /* 章节后置导航 */
+    .pagination-dock {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1.5px solid var(--rule-bold);
+      padding-top: var(--space-8);
+      margin-top: var(--space-16);
+    }
+
+    .page-nav-link {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      text-decoration: none;
+      color: var(--ink);
+      font-family: var(--font-serif);
+      transition: color 0.2s;
+    }
+
+    .page-nav-link span {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      font-family: var(--font-text);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .page-nav-link strong {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .page-nav-link:hover strong {
+      color: var(--terracotta);
+    }
+
+    @media (max-width: 1024px) {
+      .reading-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+      }
+      .sidenote-rail {
+        position: static;
+      }
+      .prose-stream {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 (与首页 100% 对齐的版心与内边距) -->
+  <header class="top-nav-bar shell">
+    <div class="breadcrumb-trail">
+      <a href="nordic-home.html">课程中台</a>
+      <span>/</span>
+      <a href="#">学期深度讲义库</a>
+      <span>/</span>
+      <span style="color: var(--ink); font-weight: 600;">第 05 周</span>
+    </div>
+    <a href="nordic-home.html" class="back-home-btn">← 返回课程总览首页</a>
+  </header>
+
+  <!-- 篇章大标题 (思源宋体 900) -->
+  <main class="chapter-header shell">
+    <span class="chapter-kicker">LECTURE NOTE · WEEK 05</span>
+    <h1 class="chapter-h1">受众雇佣（JTBD）、形式匹配与脚本原型工程</h1>
+
+    <div class="chapter-meta-line">
+      <span>开讲日程：<strong>2026年9月30日</strong></span>
+      <span>学时规制：<strong>4 学时 (180分钟)</strong></span>
+      <span>授课对象：<strong>2023级卓越新闻学实验班</strong></span>
+      <span>主讲学人：<strong>杨志宏 博士</strong></span>
+    </div>
+
+    <div class="chapter-abstract">
+      本讲作为从“选题发现”迈向“多模态正式投产”的枢纽工序，重点解决文科生缺乏将宏观选题转化为高留存、高转化视听脚本骨架的技术断层。通过受众雇佣分析锁定核心价值，结合多源数据三角互证核验真实痛点，依托本地 LLM-Wiki 知识库构建结构坚实、逻辑紧密的脚本原型。
+    </div>
+  </main>
+
+  <!-- 沉浸式双栏长文区 (同版心) -->
+  <div class="shell reading-grid">
+    <!-- 左侧常驻学术侧栏 -->
+    <aside class="sidenote-rail">
+      <div class="sidenote-box">
+        <h4 class="sidenote-heading">本篇研学目次</h4>
+        <ul class="chapter-toc-links">
+          <li><a href="#sec-jtbd">01 需求雇佣理论 (JTBD)</a></li>
+          <li><a href="#sec-triangulation">02 多源数据三角互证法</a></li>
+          <li><a href="#sec-hook">03 黄金开头 Hook 动力学</a></li>
+          <li><a href="#sec-skill">04 content-architect 技能</a></li>
+        </ul>
+      </div>
+
+      <div class="sidenote-box">
+        <h4 class="sidenote-heading">核心文献锚点</h4>
+        <div class="anchor-citation">
+          <strong>克莱顿·克里斯坦森 (2016)</strong>
+          《待完成工作理论》：用户不是消费内容，而是在特定生活困境下雇佣内容解决问题。
+        </div>
+      </div>
+
+      <div class="sidenote-box">
+        <h4 class="sidenote-heading">方法论锚点</h4>
+        <div class="anchor-citation">
+          <strong>诺曼·邓津 (1978)</strong>
+          《数据三角互证》：单一评论区留言包含严重发声者偏差，必须结合主动搜索与负向差评交叉校准。
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右侧阅读主栏 (思源宋体 700 粗重标题) -->
+    <article class="prose-stream">
+      <section id="sec-jtbd">
+        <h2>一、 待完成工作理论（JTBD）：为什么受众要消费你的内容？</h2>
+        <p>
+          在智能媒体时代，内容产能已经出现结构性过剩。任何选题策划如果仅仅停留在“我觉得这个话题很有意思”或“大模型替我生成了十个自媒体标题”，其产出的内容必然沦为数字荒原中的信息垃圾。
+        </p>
+        <p>
+          哈佛商学院克莱顿·克里斯坦森（Clayton Christensen）提出的“待完成工作理论（Jobs To Be Done，简称 JTBD）”揭示了内容立项的根本依据：受众消费一条视频或阅读一篇文章，本质上是在现实生活情境中遭遇了特定阻碍，因而决定“雇佣”该内容帮助自己摆脱困境。
+        </p>
+
+        <div class="editorial-quote">
+          “做内容之前，要先理清受众在什么情境下为了什么目的雇佣你。写不出好内容，九成是因为选题本身处于自嗨状态。”
+        </div>
+
+        <p>
+          在融媒体产品架构中，受众雇佣通常涵盖三个层次：
+        </p>
+        <ul>
+          <li><strong>功能型工作（Functional Jobs）</strong>：帮助受众解决具体现实困难，提供确定性实操方案。</li>
+          <li><strong>情绪型工作（Emotional Jobs）</strong>：缓解不确定性带来的焦虑与挫败感，获得安全感或掌控感。</li>
+          <li><strong>社交型工作（Social Jobs）</strong>：为受众提供社交货币，帮助其在群聊与同伴互动中塑造专业理性的形象。</li>
+        </ul>
+      </section>
+
+      <section id="sec-triangulation">
+        <h2>二、 多源数据三角互证：破除评论区的发声者偏差</h2>
+        <p>
+          在第 4 周的初步调研中，多数同学习惯直接翻阅竞品账号的评论区。然而，传播学与社会学经验表明，社交网络评论区存在极其强烈的“发声者偏差（Vocal Minority Bias）”。评论区留言者多为极端情绪表达者，无法代表绝大多数沉默受众。
+        </p>
+        <p>
+          依据社会学家诺曼·邓津（Norman Denzin）的数据三角互证理论，必须联合不同场景下的数字足迹进行多源交叉核验：
+        </p>
+
+        <table class="data-table-three">
+          <thead>
+            <tr>
+              <th style="width: 120px;">数据渠道类别</th>
+              <th>用户行为心理特征</th>
+              <th>核心提取指标与工具</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>主动搜索意图</strong></td>
+              <td>意图纯度最高，无社交伪装</td>
+              <td>微信搜一搜联想词、巨量算数关联词、百度指数长尾词池</td>
+            </tr>
+            <tr>
+              <td><strong>深篇长篇问答</strong></td>
+              <td>高信息密度，包含挫败细节</td>
+              <td>知乎真实体验长回答、豆瓣副业与自救小组原住民记录</td>
+            </tr>
+            <tr>
+              <td><strong>负向阻抗差评</strong></td>
+              <td>未被满足的痛点，承诺落空点</td>
+              <td>电商图书一星差评、知识付费负评、黑猫投诉维权件</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="sec-hook">
+        <h2>三、 黄金开头 Hook 动力学与三变体推演</h2>
+        <p>
+          短视频前 5 秒与图文前两页是内容的试用装。受众注意力在开端呈断崖式衰减，开头必须在 5 秒内独立建立吸引力，不能指望受众耐心阅读背景交代。
+        </p>
+
+        <div class="formula-display-card">
+          <div class="formula-title">Hook Dynamics Equation</div>
+          <div class="formula-equation">
+            黄金开头 Hook = 核心话题 + 利益抓手 + 可信度证明
+          </div>
+          <p class="formula-desc">
+            话题回答讲什么，抓手回答受众为什么要看，可信度回答凭什么相信你。三要素缺一不可，严禁自问自答。
+          </p>
+        </div>
+
+        <p>
+          针对返乡程序员生存账本这一选题，我们推导三组差异化开篇脚本：
+        </p>
+        <ul>
+          <li><strong>矛盾悬念型</strong>：“善良本分的程序员阿强，在深圳存下 60 万，为什么回老家创业仅仅 8 个月，账本就彻底见底了？”</li>
+          <li><strong>反常识颠覆型</strong>：“都以为回老家生活成本低。房租确实从三千降到了八百，但真正掏空你银行卡的，从来都不是房租。”</li>
+          <li><strong>事实冲击型</strong>：“入驻率 42%，平均存活 4.8 个月。这是某省会青年创业社区的真实数据，也是返乡前必须算清的一笔账。”</li>
+        </ul>
+      </section>
+
+      <section id="sec-skill">
+        <h2>四、 content-architect 技能规范与简报交付</h2>
+        <p>
+          在本地 WorkBuddy 中配置 `.workbuddy/skills/content-architect/SKILL.md`，该技能的核心职责是充当严厉的编辑部架构师，而不是替学生代写空洞正文：
+        </p>
+
+        <pre class="code-sample-box"><code>---
+name: content-architect
+description: 融媒体内容架构诊断与简报生成器。
+---
+
+# 核心约束
+1. 事实双链强制核验：检查输入材料是否包含 @wiki/sources/ 真实证据。
+2. 避坑规则自动拦截：读取 wiki/pitfalls/ 目录，拦截标题党与逻辑跳跃。
+3. 严格输出标准《可执行内容简报》（content-brief.md）。</code></pre>
+      </section>
+
+      <!-- 章节翻页 -->
+      <nav class="pagination-dock">
+        <a href="#" class="page-nav-link">
+          <span>上一讲次</span>
+          <strong>← 第 04 周：选题雷达与竞品逆向</strong>
+        </a>
+        <a href="#" class="page-nav-link" style="text-align: right;">
+          <span>下一讲次</span>
+          <strong>第 06 周：多模态视听生产与分镜 ➔</strong>
+        </a>
+      </nav>
+    </article>
+  </div>
+
+</body>
+</html>

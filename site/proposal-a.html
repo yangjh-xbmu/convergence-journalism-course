@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案 A：学术文库经典型 — 融合新闻产品策划与制作</title>
+  <style>
+    :root {
+      --paper: #FAF7F0;
+      --paper-elevated: #FFFFFF;
+      --paper-dim: #F2ECE0;
+      --ink: #161514;
+      --ink-body: #32302C;
+      --ink-muted: #6E685E;
+      --rule: #DDD6C6;
+      --rule-bold: #161514;
+      --accent: #942921;
+      --font-serif: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "Playfair Display", Georgia, serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "JetBrains Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--paper);
+      color: var(--ink-body);
+      font-family: var(--font-sans);
+      font-size: 16.5px;
+      line-height: 1.85;
+      padding: 3rem 2rem 6rem 2rem;
+      letter-spacing: 0.015em;
+    }
+
+    .monograph-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* 眉题 */
+    .folio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.75rem;
+      margin-bottom: 3.5rem;
+      font-family: var(--font-serif);
+      font-size: 0.8125rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* 双栏学术版式 */
+    .monograph-layout {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 4.5rem;
+      align-items: start;
+    }
+
+    /* 左侧学术侧栏 */
+    .sticky-rail {
+      position: sticky;
+      top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .book-card {
+      border: 1px solid var(--rule);
+      background-color: var(--paper-elevated);
+      padding: 1.75rem 1.5rem;
+      box-shadow: 0 4px 16px rgba(22, 21, 20, 0.03);
+    }
+
+    .book-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink);
+      border-bottom: 2px solid var(--rule-bold);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      font-size: 0.875rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: var(--font-serif);
+    }
+
+    .meta-val {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .rail-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.875rem;
+      font-family: var(--font-serif);
+    }
+
+    .rail-nav a {
+      text-decoration: none;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .rail-nav a:hover {
+      color: var(--accent);
+    }
+
+    /* 右侧主阅读栏 */
+    .reading-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    .monograph-masthead h1 {
+      font-family: var(--font-serif);
+      font-size: 2.85rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .monograph-masthead p.sub {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ink-muted);
+      font-style: italic;
+      margin-bottom: 1.75rem;
+    }
+
+    .academic-divider {
+      border-top: 2px solid var(--ink);
+      margin-bottom: 1.75rem;
+    }
+
+    .lead-quote {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      line-height: 1.95;
+      color: var(--ink-body);
+      border-left: 3px solid var(--accent);
+      padding-left: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .sec-header-mono {
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .sec-header-mono h2 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .sec-header-mono span {
+      font-size: 0.8125rem;
+      color: var(--ink-muted);
+      font-family: var(--font-serif);
+    }
+
+    /* 原则条目 */
+    .principle-box {
+      border: 1px solid var(--rule);
+      background-color: var(--paper-elevated);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 8px rgba(22, 21, 20, 0.02);
+    }
+
+    .principle-head {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .principle-num {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .principle-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .principle-desc {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--ink-body);
+      margin-bottom: 0.75rem;
+    }
+
+    .principle-boundary {
+      border-top: 1px dashed var(--rule);
+      padding-top: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--ink-muted);
+      font-family: var(--font-serif);
+    }
+
+    /* 学术研学表 */
+    .academic-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.925rem;
+    }
+
+    .academic-table th {
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 0.75rem 0.5rem;
+      text-align: left;
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .academic-table td {
+      border-bottom: 1px solid var(--rule);
+      padding: 1rem 0.5rem;
+      vertical-align: top;
+    }
+
+    .academic-table tr:hover td {
+      background-color: var(--paper-dim);
+    }
+
+    .status-pill {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+
+    .status-pill.done {
+      border: 1px solid var(--rule);
+      color: var(--ink-muted);
+    }
+
+    .status-pill.active {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background-color: rgba(148, 41, 33, 0.06);
+      font-weight: 600;
+    }
+
+    /* 学术工单台 */
+    .inquiry-station-mono {
+      border: 1px solid var(--rule);
+      background-color: var(--paper-elevated);
+      padding: 2rem;
+    }
+
+    .station-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ink);
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .station-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group-mono {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group-mono label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      font-family: var(--font-serif);
+      letter-spacing: 0.05em;
+    }
+
+    .form-control-mono {
+      padding: 0.65rem 0.85rem;
+      background-color: var(--paper);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    .submit-btn-mono {
+      width: 100%;
+      background-color: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 0.85rem 1.5rem;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+
+    .submit-btn-mono:hover {
+      background-color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+      .monograph-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .sticky-rail {
+        position: static;
+      }
+      .station-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="monograph-shell">
+    <!-- 眉题 -->
+    <header class="folio-header">
+      <span>西北民族大学新闻传播学院 · 新闻学专业文库</span>
+      <span>2026-2027 学年第一学期</span>
+      <span>卓越实验班 · 专著级讲义中台</span>
+    </header>
+
+    <div class="monograph-layout">
+      <!-- 左侧学术侧栏 -->
+      <aside class="sticky-rail">
+        <div class="book-card">
+          <h3 class="book-card-title">课程规程与典册导引</h3>
+          <dl class="meta-list">
+            <div class="meta-row">
+              <span class="meta-label">课程代码</span>
+              <span class="meta-val">23120616B (专业必修)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">学时配比</span>
+              <span class="meta-val">32 学时 (讲授 16 · 实践 16)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">开讲日程</span>
+              <span class="meta-val">前 8 周 每周三 1-4 节 (180分钟)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">实训书舍</span>
+              <span class="meta-val">致美楼 309 实验室</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">主讲学人</span>
+              <span class="meta-val">杨志宏 博士 (副教授、系主任)</span>
+            </div>
+          </dl>
+        </div>
+
+        <nav class="book-card">
+          <h3 class="book-card-title">全书目次索引</h3>
+          <ul class="rail-nav">
+            <li><a href="#principles"><span>§ I.</span> 核心架构四大原则</a></li>
+            <li><a href="#syllabus"><span>§ II.</span> 八周研学进程总录</a></li>
+            <li><a href="#inquiry"><span>§ III.</span> 学术答疑与工单响应</a></li>
+            <li><a href="https://ronghe.yangzh.cn/syllabus/" target="_blank"><span>↗</span> 教学大纲与考核量规</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- 右侧正文栏 -->
+      <main class="reading-col">
+        <div class="monograph-masthead">
+          <h1>融合新闻产品策划与制作</h1>
+          <p class="sub">Planning and Production of Convergent Journalism Products</p>
+          <div class="academic-divider"></div>
+          <div class="lead-quote">
+            本课程与《新媒体运营》确立“产品研发—运营增长”双螺旋协同框架，定位于内容研发中台与技术兵工厂。我们打破零散聊天的操作依赖，将现代新闻专业主义的可署名责任，锚定在严密的 AI Agent 工业化流水线、多源证据三角互证与本地结构化 Wiki 知识库之中，旨在培养兼具工程量化思维与深度视听表达的复合型全媒体创作者。
+          </div>
+        </div>
+
+        <!-- 原则 -->
+        <section id="principles">
+          <div class="sec-header-mono">
+            <h2>核心架构四大原则</h2>
+            <span>FOUR ARCHITECTURAL PILLARS</span>
+          </div>
+
+          <div class="principle-box">
+            <div class="principle-head">
+              <span class="principle-num">PRINCIPIUM I</span>
+              <h3 class="principle-title">道：受众雇佣价值与可署名责任</h3>
+            </div>
+            <p class="principle-desc">
+              运用克莱顿·克里斯坦森（Clayton Christensen）的待完成工作（JTBD）框架审查受众真实痛点，坚守新闻真实与可署名责任底线，拒绝自嗨与虚假流量诱惑。
+            </p>
+            <div class="principle-boundary">
+              把关防线：不可被算法自动化或虚假流量替代 · 阶段产出：受众痛点矩阵与立项红线单
+            </div>
+          </div>
+
+          <div class="principle-box">
+            <div class="principle-head">
+              <span class="principle-num">PRINCIPIUM II</span>
+              <h3 class="principle-title">法：注意力力学与数据三角互证</h3>
+            </div>
+            <p class="principle-desc">
+              掌握多媒体注意力衰减曲线与留存规律，科学推导短视频、信息图文与深度视听载体；结合诺曼·邓津（Norman Denzin）三角互证法，多源交叉验证痛点真伪。
+            </p>
+            <div class="principle-boundary">
+              把关防线：不可被主观臆断或单一偶然爆款替代 · 阶段产出：形态匹配决策书与证据链清单
+            </div>
+          </div>
+
+          <div class="principle-box">
+            <div class="principle-head">
+              <span class="principle-num">PRINCIPIUM III</span>
+              <h3 class="principle-title">术：工步切片与黄金 Hook 动力学</h3>
+            </div>
+            <p class="principle-desc">
+              规范拆解“话题+抓手+可信度”开篇三要素，建立悬念型、反常识型与事实冲击型 3 组变体；组织无提示同伴出声走查盲测，搭建三段式叙事骨架。
+            </p>
+            <div class="principle-boundary">
+              把关防线：不可被死记硬背提示词技巧替代 · 阶段产出：开篇三变体脚本与盲测记录表
+            </div>
+          </div>
+
+          <div class="principle-box">
+            <div class="principle-head">
+              <span class="principle-num">PRINCIPIUM IV</span>
+              <h3 class="principle-title">器：本地知识库与智能体技能调度</h3>
+            </div>
+            <p class="principle-desc">
+              依托 WorkBuddy 工作区物理隔离、个人 GitHub LLM-Wiki 知识图谱与标准化 Skill 规程，双链精准注入一手事实，稳定承接长期人机协同生产。
+            </p>
+            <div class="principle-boundary">
+              把关防线：不可替人类承担最终法律与道德责任 · 阶段产出：content-brief.md 与新配方卡
+            </div>
+          </div>
+        </section>
+
+        <!-- 周历 -->
+        <section id="syllabus">
+          <div class="sec-header-mono">
+            <h2>八周教学进程研学总录</h2>
+            <span>CURRICULUM TIMELINE</span>
+          </div>
+
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 70px;">周次</th>
+                <th>讲次研学主题</th>
+                <th>核心产出与把关节点</th>
+                <th style="width: 100px;">日程</th>
+                <th style="width: 110px;">状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>01</strong></td>
+                <td><strong>WorkBuddy 与 AI Agent 工作台基础</strong><br><small style="color: var(--ink-muted);">破除聊天依赖，确立可署名责任，工作区物理隔离与目录分层治理</small></td>
+                <td>个人工作区目录树 · 初始 audit-log.md</td>
+                <td style="font-family: var(--font-mono);">09.02</td>
+                <td><span class="status-pill done">已结课 · 归档</span></td>
+              </tr>
+              <tr>
+                <td><strong>02</strong></td>
+                <td><strong>LLM＋Wiki 知识库、自动化与 Agent 编排</strong><br><small style="color: var(--ink-muted);">一手文献原子化解构，任务五要素拆解法，链式与路由工作流编排</small></td>
+                <td>个人知识图谱 · 采编半自动工作流</td>
+                <td style="font-family: var(--font-mono);">09.09</td>
+                <td><span class="status-pill done">已结课 · 归档</span></td>
+              </tr>
+              <tr>
+                <td><strong>03</strong></td>
+                <td><strong>账号诊断：证据与人机协作</strong><br><small style="color: var(--ink-muted);">样本抽样与观察窗口，无提示同伴出声走查，单点验证行动卡</small></td>
+                <td>账号事实包 · 同伴走查原话 · 行动卡</td>
+                <td style="font-family: var(--font-mono);">09.16</td>
+                <td><span class="status-pill done">已结课 · 归档</span></td>
+              </tr>
+              <tr>
+                <td><strong>04</strong></td>
+                <td><strong>选题雷达：热点追踪、竞品逆向与候选队列</strong><br><small style="color: var(--ink-muted);">议程设置与框架理论，头部爆款逆向力学，topic-radar 技能实操</small></td>
+                <td>选题候选池 topic-candidates.md</td>
+                <td style="font-family: var(--font-mono);">09.23</td>
+                <td><span class="status-pill done">已结课 · 归档</span></td>
+              </tr>
+              <tr style="background-color: var(--paper-dim);">
+                <td><strong style="color: var(--accent);">05</strong></td>
+                <td><strong style="color: var(--accent);">受众雇佣（JTBD）、形式匹配与脚本原型工程</strong><br><small style="color: var(--ink-muted);">多源需求三角互证，载体匹配矩阵，黄金 Hook 动力学，简报交付</small></td>
+                <td>可执行内容简报 content-brief.md</td>
+                <td style="font-family: var(--font-mono); color: var(--accent);">09.30</td>
+                <td><span class="status-pill active">本周主讲</span></td>
+              </tr>
+              <tr>
+                <td><strong>06</strong></td>
+                <td><strong>Agent 辅助多模态视听生产与分镜脚本开发</strong><br><small style="color: var(--ink-muted);">视觉分镜生成，长短文本自适应改写，多模态视听初稿生产</small></td>
+                <td>可编辑生产包 · 分镜脚本初稿</td>
+                <td style="font-family: var(--font-mono);">10.14</td>
+                <td><span class="status-pill done">后续规划</span></td>
+              </tr>
+              <tr>
+                <td><strong>07</strong></td>
+                <td><strong>人工审核卡点、合规质检与数据反馈迭代</strong><br><small style="color: var(--ink-muted);">事实终审与版权合规，Evaluator 质检技能，留存反馈归因</small></td>
+                <td>审核日志 audit-log.md · 迭代方案</td>
+                <td style="font-family: var(--font-mono);">10.21</td>
+                <td><span class="status-pill done">后续规划</span></td>
+              </tr>
+              <tr>
+                <td><strong>08</strong></td>
+                <td><strong>全流程工业化运行、工作流封装与作品集验收</strong><br><small style="color: var(--ink-muted);">闭环运行新选题，全证据链验收，个人技能与知识库沉淀</small></td>
+                <td>综合作品集展示 · 全流程复盘报告</td>
+                <td style="font-family: var(--font-mono);">10.28</td>
+                <td><span class="status-pill done">后续规划</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 工单 -->
+        <section id="inquiry">
+          <div class="sec-header-mono">
+            <h2>学术答疑与技术工单响应台</h2>
+            <span>ACADEMIC ISSUE CONSOLE</span>
+          </div>
+
+          <div class="inquiry-station-mono">
+            <h3 class="station-title">技术疑难查核单 (GitHub Issue)</h3>
+            <div class="station-grid">
+              <div class="form-group-mono">
+                <label for="cat-mono">工单类目：</label>
+                <select id="cat-mono" class="form-control-mono">
+                  <option value="[代码报错]">终端代码 / 脚本异常 (Bug)</option>
+                  <option value="[环境依赖]">WorkBuddy / 运行时依赖 (Env)</option>
+                  <option value="[选题策划]">JTBD 需求 / 架构简报 (Pitch)</option>
+                  <option value="[作业考核]">考核量规 / 提交形式 (Rubric)</option>
+                </select>
+              </div>
+              <div class="form-group-mono">
+                <label for="desc-mono">核心疑难简述：</label>
+                <input type="text" id="desc-mono" class="form-control-mono" placeholder="例如：第5周 content-architect 技能运行找不到 sources 目录">
+              </div>
+            </div>
+            <button class="submit-btn-mono" onclick="submitMonoIssue()">提交规范 GitHub Issue 工单</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function submitMonoIssue() {
+      const cat = document.getElementById('cat-mono').value;
+      const desc = document.getElementById('desc-mono').value.trim() || '未命名技术疑难';
+      const title = `${cat} ${desc}`;
+      const body = `### 1. 基础环境
+- 操作系统: [Windows 11 / macOS / Linux]
+- 工具链版本: [WorkBuddy / Python 3.11 / Bun 1.4]
+- 所属课程周次: [例如 第5周 架构简报]
+
+### 2. 执行动作与触发场景
+描述你刚才执行了什么具体步骤：
+
+### 3. 完整终端报错 (Traceback)
+\`\`\`text
+[请在此粘贴完整的终端报错日志]
+\`\`\`
+
+### 4. 自主排查尝试
+1. 
+
+### 5. 预期结果与当前卡点
+- 预期表现: 
+- 实际现象: 
+`;
+      const repoUrl = 'https://github.com/yangjh-xbmu/teaching-2026-2027-s1/issues/new';
+      window.open(`${repoUrl}?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank');
+    }
+  </script>
+</body>
+</html>

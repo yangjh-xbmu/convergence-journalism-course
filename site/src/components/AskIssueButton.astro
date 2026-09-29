@@ -1,0 +1,148 @@
+---
+// AskIssueButton.astro - 交互式 GitHub Issue 提问构建器
+interface Props {
+  repoUrl?: string;
+}
+
+const { repoUrl = 'https://github.com/yangjh-xbmu/teaching-2026-2027-s1' } = Astro.props;
+---
+
+<div class="issue-helper-box not-content">
+  <div class="issue-helper-header">
+    <div class="icon">💬</div>
+    <div>
+      <h4 class="title">结构化提问直达通道</h4>
+      <p class="subtitle">选择问题类型，一键生成规范格式并在 GitHub Issue 中提交</p>
+    </div>
+  </div>
+
+  <div class="issue-form">
+    <div class="form-row">
+      <label for="issue-type">问题类型：</label>
+      <select id="issue-type" class="issue-select">
+        <option value="[报错排查]">终端代码 / 脚本执行报错</option>
+        <option value="[环境依赖]">WorkBuddy / Python / Bun 环境安装</option>
+        <option value="[选题策划]">选题判断 / 受众痛点 / 简报设计</option>
+        <option value="[作业咨询]">作业要求 / 考核量规 / 提交规范</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="issue-summary">问题简述：</label>
+      <input type="text" id="issue-summary" class="issue-input" placeholder="例如：第3周 run.py 无法找到数据文件" />
+    </div>
+
+    <button id="open-issue-btn" class="issue-btn" data-base-url={repoUrl}>
+      🚀 一键打开预填充的 GitHub Issue 页面
+    </button>
+  </div>
+</div>
+
+<script>
+  function setupIssueButton() {
+    const btn = document.getElementById('open-issue-btn');
+    const typeSelect = document.getElementById('issue-type') as HTMLSelectElement;
+    const summaryInput = document.getElementById('issue-summary') as HTMLInputElement;
+
+    if (!btn || !typeSelect || !summaryInput) return;
+
+    btn.addEventListener('click', () => {
+      const baseUrl = btn.getAttribute('data-base-url') || 'https://github.com/yangjh-xbmu/teaching-2026-2027-s1';
+      const issueType = typeSelect.value;
+      const summary = summaryInput.value.trim() || '未填写简述的问题咨询';
+      const title = `${issueType} ${summary}`;
+
+      const body = `### 1. 基础环境
+- 操作系统: [Windows / macOS / Linux]
+- 工具版本: [WorkBuddy / Python / Bun]
+- 所属课程周次: [例如 第5周 架构简报]
+
+### 2. 执行了什么操作
+描述你的操作步骤：
+
+### 3. 完整终端报错 (Traceback)
+\`\`\`text
+[请在此粘贴完整的终端红字错误信息]
+\`\`\`
+
+### 4. 已经尝试过的排查
+1. 
+
+### 5. 预期结果与实际现象
+- 预期表现: 
+- 实际现象: 
+`;
+
+      const targetUrl = `${baseUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+      window.open(targetUrl, '_blank');
+    });
+  }
+
+  // 页面加载或切换时绑定
+  setupIssueButton();
+  document.addEventListener('astro:page-load', setupIssueButton);
+</script>
+
+<style>
+  .issue-helper-box {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-accent);
+  }
+  .issue-helper-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .issue-helper-header .icon {
+    font-size: 2rem;
+  }
+  .issue-helper-header .title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .issue-helper-header .subtitle {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+  }
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .form-row label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sl-color-gray-2);
+  }
+  .issue-select, .issue-input {
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-gray-7);
+    color: var(--sl-color-white);
+    font-size: 0.95rem;
+  }
+  .issue-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .issue-btn:hover {
+    opacity: 0.9;
+  }
+</style>

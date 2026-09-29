@@ -1,0 +1,147 @@
+---
+import config from 'virtual:starlight/user-config';
+import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
+import Search from 'virtual:starlight/components/Search';
+import SiteTitle from 'virtual:starlight/components/SiteTitle';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+
+const shouldRenderSearch =
+  config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
+---
+
+<div class="header-container">
+  <div class="header-left">
+    <div class="site-title-wrap">
+      <SiteTitle />
+    </div>
+    <div class="brand-affiliation sl-hidden xl:sl-flex">
+      <span class="sep-slash">/</span>
+      <span class="academy-name">西北民族大学新闻传播学院 · 卓越班</span>
+    </div>
+  </div>
+
+  <div class="header-center print:hidden">
+    {shouldRenderSearch && <Search />}
+  </div>
+
+  <div class="header-right print:hidden">
+    <a href="/lectures/week5/" class="btn-lecture-jump sl-hidden md:sl-inline-flex">
+      <span>第05周讲义精读</span>
+      <span class="jump-arrow">➔</span>
+    </a>
+
+    <div class="sl-flex social-icons">
+      <SocialIcons />
+    </div>
+
+    <div class="theme-select-wrap">
+      <ThemeSelect />
+    </div>
+
+    <LanguageSelect />
+  </div>
+</div>
+
+<style>
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    gap: var(--space-4);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    min-width: 0;
+    flex-shrink: 0;
+  }
+
+  .site-title-wrap :global(.site-title) {
+    font-family: var(--font-serif) !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: var(--ink-title) !important;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .brand-affiliation {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    font-family: var(--font-serif);
+    white-space: nowrap;
+  }
+
+  .sep-slash {
+    color: var(--rule-hairline);
+    font-weight: 300;
+  }
+
+  .header-center {
+    flex: 1;
+    max-width: 28rem;
+    margin-inline: var(--space-2);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  .btn-lecture-jump {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    color: var(--accent-primary) !important;
+    font-family: var(--font-serif);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-lecture-jump:hover {
+    background-color: var(--accent-primary);
+    color: var(--color-linen-50) !important;
+  }
+
+  .jump-arrow {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+  }
+
+  .btn-lecture-jump:hover .jump-arrow {
+    transform: translateX(2px);
+  }
+
+  .social-icons {
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .theme-select-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 640px) {
+    .header-container {
+      gap: var(--space-2);
+    }
+  }
+</style>

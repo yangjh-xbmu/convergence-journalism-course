@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>账号诊断 · 四小节课堂课件</title>
+    <link rel="icon" type="image/svg+xml" href="./part1/favicon.svg" />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #202833;
+        --blue: #1a4a8a;
+        --muted: #596675;
+        --line: #d8e0e9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #fcfcfa;
+        color: var(--ink);
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+      }
+      main {
+        max-width: 1120px;
+        margin: auto;
+        padding: 64px 40px;
+      }
+      header p {
+        color: var(--muted);
+        font-size: 18px;
+        margin: 0 0 14px;
+      }
+      h1 {
+        font-family: "Songti SC", "SimSun", serif;
+        font-size: 52px;
+        line-height: 1.2;
+        margin: 0 0 20px;
+        color: var(--blue);
+      }
+      .intro {
+        font-size: 22px;
+        max-width: 780px;
+      }
+      .lessons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin: 38px 0;
+      }
+      .lesson {
+        display: block;
+        padding: 26px 30px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: inherit;
+        text-decoration: none;
+        background: #fff;
+      }
+      .lesson:hover {
+        border-color: var(--blue);
+        background: #edf3fa;
+      }
+      .lesson:focus-visible,
+      a:focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 5px;
+      }
+      .label {
+        font-size: 15px;
+        color: var(--blue);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+      }
+      .lesson h2 {
+        font-size: 27px;
+        margin: 12px 0;
+      }
+      .lesson p {
+        font-size: 18px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .operation {
+        padding: 22px 26px;
+        background: #edf3fa;
+        border-radius: 10px;
+      }
+      .operation h2 {
+        font-size: 22px;
+        margin: 0 0 10px;
+      }
+      .operation p {
+        margin: 7px 0;
+      }
+      .operation a {
+        color: var(--blue);
+        font-weight: 600;
+      }
+      footer {
+        font-size: 15px;
+        color: var(--muted);
+        margin-top: 28px;
+      }
+      @media (max-width: 720px) {
+        main {
+          padding: 32px 20px;
+        }
+        h1 {
+          font-size: 38px;
+        }
+        .lessons {
+          grid-template-columns: 1fr;
+        }
+        .lesson {
+          padding: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p>融合新闻产品策划与制作 · 第3次课 · 4 × 45分钟</p>
+        <h1>账号诊断：证据与人机协作</h1>
+        <div class="intro">
+          先整理已有作品，再听同伴怎样理解。让工具协助诊断，由本人决定下一步。
+        </div>
+      </header>
+      <nav class="lessons" aria-label="选择小节">
+        <a class="lesson" href="part1/#/1"
+          ><span class="label">01 · 道 / 法</span>
+          <h2>把印象变成事实材料</h2>
+          <p>账号说明、可比样本与数据边界。</p></a
+        >
+        <a class="lesson" href="part2/#/1"
+          ><span class="label">02 · 法 / 术</span>
+          <h2>先听人，再请 AI 分析</h2>
+          <p>无提示走查，分开原话、观察与解释。</p></a
+        >
+        <a class="lesson" href="part3/#/1"
+          ><span class="label">03 · 术 / 器</span>
+          <h2>让 Agent 工作并接受检查</h2>
+          <p>WorkBuddy 主线，OMP 等价可选。</p></a
+        >
+        <a class="lesson" href="part4/#/1"
+          ><span class="label">04 · 道 / 法</span>
+          <h2>只决定下一步</h2>
+          <p>行动卡、人工确认与两课交接。</p></a
+        >
+      </nav>
+      <section class="operation">
+        <h2>上课前，打开操作材料</h2>
+        <p>
+          <a href="part1/materials/index.html"
+            >查看与复制完整任务、Skill、输入文件和填写模板</a
+          >
+        </p>
+        <p>
+          方向键翻页；课件工具栏可进入演讲者模式查看每页备注。四套课件分别计时45分钟，操作活动已计入课时。
+        </p>
+        <p>
+          Windows：解压后运行 <code>start.bat</code>；macOS：运行
+          <code>start.command</code>；通用方式：<code>python3 start.py</code
+          >。播放需要 Python 3 和浏览器，不需要网络或
+          Node.js。不要直接双击各套课件的 HTML 文件。
+        </p>
+      </section>
+      <footer>
+        操作包中的账号、数值与反馈均为教学虚构，不是学生数据或真实校园政策。使用个人账号材料时须先脱敏。
+      </footer>
+    </main>
+  </body>
+</html>

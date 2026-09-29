@@ -1,2 +1,34 @@
+# Node / Starlight
+node_modules/
+dist/
+.astro/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+
+# OS and editor
 .DS_Store
-*.pdf
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Local slides outputs
+slides/node_modules/
+slides/dist/
+slides/.cache/
+
+# Sensitive/internal教务数据防御
+*.xlsx
+*.xls
+*.docx
+*.doc
+grades/
+attendance/
+roster/

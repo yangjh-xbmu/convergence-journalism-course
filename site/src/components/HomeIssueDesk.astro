@@ -1,0 +1,96 @@
+---
+/**
+ * HomeIssueDesk.astro - § SECTION 03: 学术答疑与技术工单响应台
+ * 提供结构化 GitHub Issue 交互式提问构建器，推动班级工程排错资产沉淀
+ */
+interface Props {
+  repoUrl?: string;
+}
+
+const { repoUrl = 'https://github.com/yangjh-xbmu/teaching-2026-2027-s1' } = Astro.props;
+---
+
+<section class="sec-container not-content">
+  <div class="sec-top-header">
+    <div>
+      <span class="sec-num-prefix">§ SECTION 03</span>
+      <h2 class="sec-heading">学术答疑与技术工单响应台</h2>
+    </div>
+    <p class="sec-abstract">
+      杜绝微信群零散破碎截图。遵循开源工程协作范式，通过结构化 GitHub Issue 提交复现材料，沉淀为班级共享资产。
+    </p>
+  </div>
+
+  <div class="inquiry-minimal">
+    <h3 class="inquiry-banner-title">技术疑难查核单 · 学员工单中台</h3>
+
+    <div class="inquiry-grid-layout">
+      <div>
+        <label class="field-label-small" for="home-ticket-type">工单类目</label>
+        <select id="home-ticket-type" class="minimal-input">
+          <option value="[代码报错]">终端代码 / 脚本异常 (Bug)</option>
+          <option value="[环境依赖]">WorkBuddy / 运行时环境 (Env)</option>
+          <option value="[选题策划]">JTBD 需求 / 架构简报 (Pitch)</option>
+          <option value="[作业考核]">考核量规 / 提交形式 (Rubric)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="field-label-small" for="home-ticket-text">核心疑难概述（限一行）</label>
+        <input
+          type="text"
+          id="home-ticket-text"
+          class="minimal-input"
+          placeholder="例如：第5周 content-architect 技能运行找不到 sources 目录"
+        />
+      </div>
+
+      <button class="minimal-action-btn" id="home-submit-ticket-btn" data-repo-url={repoUrl}>
+        提交 GitHub Issue 工单
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initIssueDesk() {
+    const btn = document.getElementById('home-submit-ticket-btn');
+    const typeSelect = document.getElementById('home-ticket-type') as HTMLSelectElement | null;
+    const inputEl = document.getElementById('home-ticket-text') as HTMLInputElement | null;
+
+    if (!btn || !typeSelect || !inputEl) return;
+
+    btn.onclick = () => {
+      const baseUrl = btn.getAttribute('data-repo-url') || 'https://github.com/yangjh-xbmu/teaching-2026-2027-s1';
+      const cat = typeSelect.value;
+      const text = inputEl.value.trim() || '未命名技术疑难';
+      const title = `${cat} ${text}`;
+      const body = `### 1. 基础环境
+- 操作系统: [Windows 11 / macOS / Linux]
+- 工具链版本: [WorkBuddy / Python 3.11 / Bun 1.4]
+- 所属课程周次: [例如 第5周 架构简报]
+
+### 2. 执行动作与触发场景
+描述你刚才执行了什么具体步骤：
+
+### 3. 完整终端报错 (Traceback)
+\`\`\`text
+[请在此粘贴完整的终端报错日志]
+\`\`\`
+
+### 4. 自主排查尝试
+1. 
+
+### 5. 预期结果与当前卡点
+- 预期表现: 
+- 实际现象: 
+`;
+
+      const targetUrl = `${baseUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+      window.open(targetUrl, '_blank');
+    };
+  }
+
+  initIssueDesk();
+  document.addEventListener('astro:page-load', initIssueDesk);
+</script>
